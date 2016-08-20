@@ -10,6 +10,16 @@ else
     exit 1
 fi
 
+echo "*********** test CVE:"
+./cve 2>&1 > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "falco CVE command logic test succeeded"
+else
+    echo "falco CVE command logic test FAILED"
+    exit 1
+fi
+
 echo "*********** test format:"
 ./format 2>&1 > /dev/null
 if [ "$?" -eq 0 ]
@@ -67,6 +77,16 @@ then
     echo "falco package version logic test succeeded"
 else
     echo "falco package version logic test FAILED"
+    exit 1
+fi
+
+echo "********* cve:"
+./cve 2>&1 > /dev/null
+if [ "$?" -eq 0 ]
+then
+    echo "falco cve logic test succeeded"
+else
+    echo "falco cvec test FAILED"
     exit 1
 fi
 

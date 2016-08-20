@@ -1,3 +1,15 @@
+#### version 0.6.7 changed from vfeed to database loaded by nvd2sqlite3
+
+#### version 0.6.6 changed search to make sort offer most severe CVSS
+
+#### version 0.6.5 setup -u update for vfeed.db
+
+#### version 0.6.4 changed vfeed version to most current
+
+#### version 0.6.3 added json output for -C CVE
+
+#### version 0.6.2 added -C CVE - display a CVE entry for a given CVE
+
 #### RELEASE version 0.6.1 fixed build logic for single item and list of items
 removed the *.pyc files from the source tree
 

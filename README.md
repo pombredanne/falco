@@ -7,35 +7,37 @@ Falco is a simple tool to search the NIST NVD and report latent security bugs in
 
 Falco Dependencies
 ------------------
-Falco depends on the vfeed.db, a sqlite implementation of the NIST NVD vulnerability database - vFeed/vFeedApi, the open source correlated & cross-linked local vulnerability database by NJ OUCHN, Toolswatch.org 
-(copied from https://github.com/toolswatch/vFeed/) 
+Falco depends on the nvdsqlite3, a sqlite loader of the NIST NVD
+vulnerability database. You must pip install nvdsqlite3 and pystache. Then update the cvedb database and then point falco at runtime at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow.
 
-You must install and update the vfeed database and then point falco at the up-to-date database in order to have an effective vulnerability intelligence feature in your software workflow. Use this command to install and update the vfeed database:
-$ falco -u
-Use this command to update the database with the full text search tables used in falco:
-$ falco -c 
+Thanks and shout outs:
+----------------------
+Jan Schaumann, twitter for https://github.com/jschauma/nvd2sqlite3
+NJ Ouchn, vfeed database, awesome tool!
 
-Also use the same commands periodically. The vfeed database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
+Use this command to install and update the NVD database:
+$ ./falco -u
+
+Also use the same update command periodically. The cvedb database must be updated periodically in order to implement the notion that you are getting current threat knowledge.
 
 Setup for first use from the falco directory:  
 
 ```bash
-$ falco -u 
-$ falco -c
+$ ./falco -u
 ```  
 
-If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch vfeed.
+If you find falco useful, please give a shoutout to us, and the great folks who build and maintain toolswatch cve database that helped use get the project started.
 
 No free lunch
 -------------
 Users of falco are responsible for making sure the package names, and versions supplied to falco are current with the project being evaluated. There is no sophistication built into falco to survey your code for 3rd party dependencies.There are commercial products which can do this and so much more. Falco users must obtain and manage their own configuration management data for their project.
 
-Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. See the list below for some other 3rd party code dependency check apps. 
+Recently, Jeremy Long, of OWASP dependency-check gave me a heads up regarding other FOSS projects that also provide 3rd party code dependency security checks. See the list below for some other 3rd party code dependency check apps.
 
 Open source 3rd party software dependency apps
 ----------------------------------------------
 * Victims - https://github.com/victims
-* OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/ 
+* OWASP dependency-check - https://jeremylong.github.io/DependencyCheck/
 * JavaScript retire.js - https://github.com/victims/victims-enforcer
 * fossology - http://www.fossology.org/projects/fossology (license checking)
 
@@ -47,7 +49,7 @@ Commercial products that do dependency checks
 
 Why falco
 ---------
-We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is bare-bones simple, and implements a basic software security check mandated by many security maturity models such as the one in OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, or BSIMM - http://www.bsimm.com/online/governance/cp/ 
+We wrote the tool because (at the time we looked) there were no accessible tools for developers and project maintainers to easily find known security vulnerabilities in software they use as part of a project.  Falco is bare-bones simple, and implements a basic software security check mandated by many security maturity models such as the one in OWASP: https://www.owasp.org/index.php/Top_10_2013-A9-Using_Components_with_Known_Vulnerabilities, OpenSAMM - http://www.opensamm.org/, or BSIMM - http://www.bsimm.com/online/governance/cp/
 
 Falco is not a code scanner
 ---------------------------
@@ -64,7 +66,7 @@ July 11, 2014
 
 All rights reserved.
 
-Copyright 2014 Mark Menkhus, Glynn Mitchell
+(c) Copyright 2015 Falconry Concepts LLC.
 
 License
 -------
@@ -82,40 +84,44 @@ limitations under the License.
 
 Falco help
 ----------
-usage: falco [-h] [-b] [-c] [-d [VFEED_DATABASE]] [-f [PACKAGELISTFILE]]  
-             [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]] [-o [OUTPUTFILE]]  
-             [-t [text|json|html]][-u] [-v [PACKAGE_VERSION]] [-V]  
-  
+usage: falco [-h] [-b] [-c] [-C [CVE]] [-d [CVEDB_DATABASE]]
+             [-f [PACKAGELISTFILE]] [-i [ITEMS_REPORTED]] [-n [PACKAGE_NAME]]
+             [-o [OUTPUTFILE]] [-t [TYPE]] [-u] [-v [PACKAGE_VERSION]] [-V]
+
 Checks command line or, a file list of software programs for known security
 defects documented in the National Vulnerability Database. Matches a project
-name and version name to CPE URIs in the NVD database.  
-  
-optional arguments:  
-  -h, --help            show this help message and exit  
-  -b, --build_environment  
-                        for use in build environments, return fail if items  
-                        found  
-  -c --config     setup vfeed database for use after every update
-  -d [VFEED_DATABASE], --vfeed_database [VFEED_DATABASE]  
-                        location of toolswatch/vfeed.db sqlite database
-  -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]  
-                        file containing the list of packages to evaluate
-  -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]  
-                        number of items reported for NVD/CVE matches  
-  -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]  
-                        package name to search for  
-  -o [OUTPUTFILE], --outputfile [OUTPUTFILE]  
+name and version name to CPE URIs in the NVD database. Uses the Copyright
+2013, nvd2sqlite3 app.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -b, --build_environment
+                        for use in build environments, return fail if items
+                        found
+  -c, --config          update database and setup for use. Do this after
+                        manually downloading a new database
+  -C [CVE], --CVE [CVE]
+                        display a CVE entry
+  -d [CVEDB_DATABASE], --cvedb_database [CVEDB_DATABASE]
+                        location of the cvedb sqlite database
+  -f [PACKAGELISTFILE], --packagelistfile [PACKAGELISTFILE]
+                        file where the list of packages to evaluate is stored
+  -i [ITEMS_REPORTED], --items_reported [ITEMS_REPORTED]
+                        number of items reported for NVD/CVE matches
+  -n [PACKAGE_NAME], --package_name [PACKAGE_NAME]
+                        package name to search for
+  -o [OUTPUTFILE], --outputfile [OUTPUTFILE]
                         name of output file
   -t [TYPE], --type [TYPE]
-                        format of output, options are text, json or html  
-  -u --update     update or load the vfeed database.  Run this about once per week.  use $ falco -c to complete the database configuration. 
-  -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]  
-                        package version to look for  
-  -V, --Version         report the version of falco and exit  
-  
+                        format of output, options are text, html, json
+  -u, --update          download database. Do this about once a week
+  -v [PACKAGE_VERSION], --package_version [PACKAGE_VERSION]
+                        package version to look for
+  -V, --Version         report the version of falco and exit
+
 Usage Examples
 -----------------------
-Assumes vfeed.db is in the same directory as falco  
+Assumes cvedb is in the /var/db directory  
 
 ### Example 1, check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database ###
 
@@ -129,13 +135,13 @@ CVSS Score: 4.3
 CPE id: cpe:/a:python:python:2.7.3  
 Published on:             2014-05-19T10:55:09.987-04:00  
 Summary Description: Python 2.7 before 3.4 only uses the last eight bits of the prefix to randomize hash values, which causes it to compute hash values without restricting the ability to trigger hash collisions predictably and makes it easier for context-dependent attackers to cause a denial of service (CPU consumption) via crafted input to an application that maintains a hash table.  NOTE: this vulnerability exists because of an incomplete fix for CVE-2012-1150.  
-  
+
 ### Example 2, using falco in build situations ###
 
-Assume the feed database is in the vfeed subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
+Assume the feed database is in the /var/db subdirectory. Check a package named 'python' version '2.7.3' for vulnerabilities in the NVD database and if any are found, return a non zero return value.  Placing this in a makefile will cause make to exit when a vulnerability matches.  
 
 ```bash
-$ ./falco.py -d ./vfeed/vfeed.db -b -n python -v 2.7.3 -o falcolog  
+$ ./falco.py -d /var/db/cvedb -b -n python -v 2.7.3 -o falcolog  
 $ echo $?  
 1  
 $  
@@ -149,37 +155,29 @@ $
 \# Solution is twofold: to update bash to most recent code, and  
 \# to change the # make entry to reflect that new version number:  
 bash.build.out:  
-    ./falco.py -b -n bash  -v 1.14.7 -d ./vfeed/vfeed.db > bash.build.out  
+    ./falco.py -b -n bash  -v 1.14.7 -d /var/db/cvedb > bash.build.out  
 clean:  
     rm bash.build.out  
-  
+
 #### Execution ####
 
 ```bash
 $ make  
-./falco.py -b -n bash  -v 1.14.7 -d ./vfeed.db -o bash.build.out  
+./falco.py -b -n bash  -v 1.14.7 -d /var/db/cvedb -o bash.build.out  
 make: *** [bash.build.out] Error 1  
 ```  
 #### Explanation ####
  -b cause falco to return fail if any there are CVE findings returned from searching NVD for the package and version.
-  
+
 #### Suggested action ####
 File a bug in the bug tracker, change the makefile, remove -b, and when the bug is fixed, update the makefile again to reflect the latest package number and reinstate the -b   
-  
+
 Dependencies
 ------------
-Falco uses the NVD database from the vfeed project:   https://github.com/toolswatch/vFeed  
-Download the vfeed package and use the configure feature to gather the nvd database in sqlite3 form. Setup for first use from the falco directory:  
+1) update the /var/db/cvedb for initial use, using falco -u
 
-```bash
-$ bin/get_vfeed.sh
-$ falco -u 
-$ falco -c
-```  
+2) Note it would be a good idea to put this "falco -u" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
 
-2) Write down where you put the vfeed.db file, and store that for future use, falco uses that database as an argument.   
-3) Note it would be a good idea to put this "falco -u;falco -c" in a cron job, since falco counts on using updated NVD data to see when new vulnerabilities exist. This database is updated every few weeks.
- 
 bug reports
 -----------
 send bug reports to menkhus@icloud.com  
